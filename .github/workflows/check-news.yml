@@ -25,19 +25,16 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Install Chrome and Chromedriver
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y wget unzip chromium-browser
-          wget https://chromedriver.storage.googleapis.com/$(wget -qO- https://chromedriver.storage.googleapis.com/LATEST_RELEASE)/chromedriver_linux64.zip
-          unzip chromedriver_linux64.zip
-          sudo mv chromedriver /usr/bin/chromedriver
-          sudo chmod +x /usr/bin/chromedriver
+      # 新增：自動安裝匹配的 Chromedriver
+      - name: Setup Chromedriver
+        uses: nanasess/setup-chromedriver@v2
 
       - name: Run checker
         env:
           DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
-        run: python main.py
+        run: |
+          chromedriver &  # 啟動 chromedriver（背景執行）
+          python main.py
 
       - name: Commit and push if changed
         uses: stefanzweifel/git-auto-commit-action@v5
