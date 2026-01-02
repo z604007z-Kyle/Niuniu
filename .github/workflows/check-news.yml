@@ -2,7 +2,7 @@ name: Check News Every 5 Minutes
 
 on:
   schedule:
-    - cron: '*/15 * * * *'
+    - cron: '2,17,32,47 * * * *'  # 推薦：偏移 2 分鐘開始，每 15 分鐘一次（避開整點擁擠）
   workflow_dispatch:
 
 permissions:
