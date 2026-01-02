@@ -5,14 +5,15 @@ on:
     - cron: '*/5 * * * *'
   workflow_dispatch:
 
+permissions:  # 新增這段！授予寫入權限
+  contents: write
+
 jobs:
   check:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}  # 預設就有
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -29,7 +30,6 @@ jobs:
           DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
         run: python main.py
 
-      # 新增：如果 last_data.txt 有變動，就自動 commit 回去
       - name: Commit updated last_data if changed
         run: |
           git config --local user.email "action@github.com"
@@ -37,5 +37,3 @@ jobs:
           git add last_data.txt
           git diff --quiet && echo "No changes" || git commit -m "Update last_data.txt [skip ci]" -a
           git push
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
